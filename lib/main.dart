@@ -18,6 +18,16 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: 'Surf Spots',
       theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
+        colorScheme: const ColorScheme.light(
+          primary: Color(0xFF0E5386),
+          secondary: Color(0xFFA2D8F7),
+          surface: Colors.white,
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF0E5386),
+          foregroundColor: Colors.white,
+        ),
         textTheme: GoogleFonts.josefinSansTextTheme(),
         primaryTextTheme: GoogleFonts.josefinSansTextTheme(),
       ),
@@ -55,6 +65,10 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+    final secondary = Theme.of(context).colorScheme.secondary;
+    final surface = Theme.of(context).colorScheme.surface;
+  
     return Scaffold(
       appBar: AppBar(title: const Text('Surf Spots')),
       body: FutureBuilder<List<dynamic>>(
@@ -64,7 +78,7 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text('Error: \${snapshot.error}'));
+            return Center(child: Text('Error: ${snapshot.error}'));
           }
           final spots = snapshot.data!;
           return GridView.builder(
@@ -92,14 +106,31 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
 
               return GFCard(
                 boxFit: BoxFit.cover,
+                color: surface,
+                elevation: 4,
+                borderRadius: BorderRadius.circular(12),
+                buttonBar: GFButtonBar(children: []),
                 image: imageUrl.isNotEmpty ? Image.network(imageUrl) : null,
                 title: GFListTile(
-                  titleText: destination,
-                  subTitleText: 'Difficulty: $difficulty',
+                  title: Text(
+                    destination,
+                    style: GoogleFonts.josefinSans(
+                      color: primary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  subTitle: Text(
+                    'Difficulty: $difficulty',
+                    style: GoogleFonts.josefinSans(
+                      color: secondary,
+                      fontSize: 14,
+                    ),
+                  ),
                 ),
                 content: Text(
                   'Season: $seasonStart to $seasonEnd',
-                  style: const TextStyle(fontSize: 12),
+                  style: GoogleFonts.josefinSans(fontSize: 12, color: primary),
                 ),
               );
             },
