@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:getwidget/getwidget.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MainApp());
@@ -14,7 +15,14 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(title: 'Surf Spots', home: SurfSpotsGrid());
+    return MaterialApp(
+      title: 'Surf Spots',
+      theme: ThemeData(
+        textTheme: GoogleFonts.josefinSansTextTheme(),
+        primaryTextTheme: GoogleFonts.josefinSansTextTheme(),
+      ),
+      home: SurfSpotsGrid(),
+    );
   }
 }
 
