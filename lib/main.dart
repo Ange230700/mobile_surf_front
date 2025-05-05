@@ -66,7 +66,7 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Header(title: 'Spot Surf'),
+        title: Header(title: 'Surf Spots'),
         centerTitle: true,
       ),
       body: FutureBuilder<List<dynamic>>(
@@ -103,21 +103,53 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
                   String imageUrl = '';
                   if (photos != null && photos.isNotEmpty) {
                     imageUrl = _SurfSpotsGridState()._cleanUrl(photos[0]['url'] as String);
+                    //imageUrl = _cleanUrl(photos[0]['url'] as String);
                   }
                   final isFavorite = _favoriteIndices.contains(index);
 
                   return Card(
-                    child: Column(
+                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                    if (imageUrl.isNotEmpty)
+                      Expanded(child: Image.network(imageUrl, fit: BoxFit.cover)),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(destination, style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text('Difficulty: $difficulty'),
+                          Text('Season: $seasonStart - $seasonEnd'),
+                        ],
+                      ),
+                    ),
+                    // ← NOUVEAU: bouton Like / Dislike
+                    OverflowBar(
+                      alignment: MainAxisAlignment.end,
                       children: [
-                        if (imageUrl.isNotEmpty) Image.network(imageUrl),
-                        Text(destination),
-                        Text('Difficulty: \$difficulty'),
-                        Text('Season: \$seasonStart - \$seasonEnd'),
+                        IconButton(
+                          icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+                          color: isFavorite
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).colorScheme.secondary,
+                          onPressed: () {
+                            setState(() {
+                              if (isFavorite) {
+                                _favoriteIndices.remove(index);
+                              } else {
+                                _favoriteIndices.add(index);
+                              }
+                            });
+                          },
+                       ),
                       ],
                     ),
-                  );
-                },
+                  ],
+                ),
               );
+             },
+           );
               break;
             case 1:
               // Favorites page, pass via constructor
