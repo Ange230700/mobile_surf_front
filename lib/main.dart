@@ -46,6 +46,8 @@ class SurfSpotsGrid extends StatefulWidget {
 class _SurfSpotsGridState extends State<SurfSpotsGrid> {
   late Future<List<dynamic>> _spotsFuture;
 
+  final Set<int> _favoriteIndices = {};
+
   @override
   void initState() {
     super.initState();
@@ -58,17 +60,15 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
     return data['records'] as List<dynamic>;
   }
 
-  String _cleanUrl(String raw) {
-    // Remove angle brackets and semicolons
-    return raw.replaceAll(RegExp(r'[<>;]'), '');
-  }
+  String _cleanUrl(String raw) => raw.replaceAll(RegExp(r'[<>;]'), '');
 
   @override
   Widget build(BuildContext context) {
-    final primary = Theme.of(context).colorScheme.primary;
-    final secondary = Theme.of(context).colorScheme.secondary;
-    final surface = Theme.of(context).colorScheme.surface;
-  
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
+    final secondary = theme.colorScheme.secondary;
+    final surface = theme.colorScheme.surface;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Surf Spots')),
       body: FutureBuilder<List<dynamic>>(
@@ -103,13 +103,32 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
                 final rawUrl = photos[0]['url'] as String;
                 imageUrl = _cleanUrl(rawUrl);
               }
+              final isFavorite = _favoriteIndices.contains(index);
 
               return GFCard(
                 boxFit: BoxFit.cover,
                 color: surface,
                 elevation: 4,
                 borderRadius: BorderRadius.circular(12),
-                buttonBar: GFButtonBar(children: []),
+                buttonBar: GFButtonBar(
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                      ),
+                      color: isFavorite ? primary : secondary,
+                      onPressed: () {
+                        setState(() {
+                          if (isFavorite) {
+                            _favoriteIndices.remove(index);
+                          } else {
+                            _favoriteIndices.add(index);
+                          }
+                        });
+                      }
+                    ),
+                  ],
+                ),
                 image: imageUrl.isNotEmpty ? Image.network(imageUrl) : null,
                 title: GFListTile(
                   title: Text(
