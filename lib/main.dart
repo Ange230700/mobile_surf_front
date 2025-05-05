@@ -96,75 +96,94 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
               final seasonStart = fields['Peak Surf Season Begins'] as String;
               final seasonEnd = fields['Peak Surf Season Ends'] as String;
               final photos = fields['Photos'] as List<dynamic>?;
-              final rawUrl = photos != null && photos.isNotEmpty
-                ? photos[0]['url'] as String
-                : null;
+              final rawUrl =
+                  photos != null && photos.isNotEmpty
+                      ? photos[0]['url'] as String
+                      : null;
               final imageUrl = rawUrl;
               final isFavorite = _favoriteIndices.contains(index);
 
-              return GFCard(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                clipBehavior: Clip.antiAlias,
-                boxFit: BoxFit.cover,
-                showImage: imageUrl != null,
-                color: surface,
-                elevation: 4,
-                borderRadius: BorderRadius.circular(12),
-                buttonBar: GFButtonBar(
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        isFavorite ? Icons.favorite : Icons.favorite_border,
+              return AspectRatio(
+                aspectRatio: 0.7,
+                child: GFCard(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  boxFit: BoxFit.cover,
+                  showImage: imageUrl != null,
+                  elevation: 4,
+                  color: surface,
+                  image:
+                      imageUrl != null
+                          ? Image.network(
+                            imageUrl,
+                            height: 120,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            errorBuilder:
+                                (c, e, s) => Container(
+                                  height: 120,
+                                  color: Colors.grey[200],
+                                  child: const Icon(
+                                    Icons.broken_image,
+                                    size: 40,
+                                  ),
+                                ),
+                          )
+                          : null,
+                  borderRadius: BorderRadius.circular(12),
+                  title: GFListTile(
+                    title: Text(
+                      destination,
+                      style: GoogleFonts.josefinSans(
+                        color: primary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
                       ),
-                      color: isFavorite ? primary : secondary,
-                      onPressed: () {
-                        setState(() {
-                          if (isFavorite) {
-                            _favoriteIndices.remove(index);
-                          } else {
-                            _favoriteIndices.add(index);
-                          }
-                        });
-                      }
                     ),
-                  ],
-                ),
-                image: imageUrl != null
-                  ? Image.network(
-                    imageUrl,
-                    height: 120,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        height: 120,
-                        color: Colors.grey[200],
-                        child: const Icon(Icons.broken_image, size: 40),
-                      );
-                    },
-                  )
-                  : null,
-                title: GFListTile(
-                  title: Text(
-                    destination,
-                    style: GoogleFonts.josefinSans(
-                      color: primary,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
+                    subTitle: Text(
+                      'Difficulty: $difficulty',
+                      style: GoogleFonts.josefinSans(
+                        color: secondary,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
-                  subTitle: Text(
-                    'Difficulty: $difficulty',
-                    style: GoogleFonts.josefinSans(
-                      color: secondary,
-                      fontSize: 14,
-                    ),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Season: $seasonStart to $seasonEnd',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.josefinSans(
+                          fontSize: 12,
+                          color: primary,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                content: Text(
-                  'Season: $seasonStart to $seasonEnd',
-                  style: GoogleFonts.josefinSans(fontSize: 12, color: primary),
-                  softWrap: true,
+                  buttonBar: GFButtonBar(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                        ),
+                        color: isFavorite ? primary : secondary,
+                        onPressed: () {
+                          setState(() {
+                            if (isFavorite) {
+                              _favoriteIndices.remove(index);
+                            } else {
+                              _favoriteIndices.add(index);
+                            }
+                          });
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
@@ -174,4 +193,3 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
     );
   }
 }
-
