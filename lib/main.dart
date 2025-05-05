@@ -132,9 +132,16 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
                 image: imageUrl != null
                   ? Image.network(
                     imageUrl,
-                    height: 140,
+                    height: 120,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: 120,
+                        color: Colors.grey[200],
+                        child: const Icon(Icons.broken_image, size: 40),
+                      );
+                    },
                   )
                   : null,
                 title: GFListTile(
@@ -154,9 +161,12 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
                     ),
                   ),
                 ),
-                content: Text(
-                  'Season: $seasonStart to $seasonEnd',
-                  style: GoogleFonts.josefinSans(fontSize: 12, color: primary),
+                content: Flexible(
+                  child: Text(
+                    'Season: $seasonStart to $seasonEnd',
+                    style: GoogleFonts.josefinSans(fontSize: 12, color: primary),
+                    softWrap: true,
+                  ),
                 ),
               );
             },
