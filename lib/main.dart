@@ -60,8 +60,6 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
     return data['records'] as List<dynamic>;
   }
 
-  String _cleanUrl(String raw) => raw.replaceAll(RegExp(r'[<>;]'), '');
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -98,15 +96,17 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
               final seasonStart = fields['Peak Surf Season Begins'] as String;
               final seasonEnd = fields['Peak Surf Season Ends'] as String;
               final photos = fields['Photos'] as List<dynamic>?;
-              String imageUrl = '';
-              if (photos != null && photos.isNotEmpty) {
-                final rawUrl = photos[0]['url'] as String;
-                imageUrl = _cleanUrl(rawUrl);
-              }
+              final rawUrl = photos != null && photos.isNotEmpty
+                ? photos[0]['url'] as String
+                : null;
+              final imageUrl = rawUrl;
               final isFavorite = _favoriteIndices.contains(index);
 
               return GFCard(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                clipBehavior: Clip.antiAlias,
                 boxFit: BoxFit.cover,
+                showImage: imageUrl != null,
                 color: surface,
                 elevation: 4,
                 borderRadius: BorderRadius.circular(12),
@@ -129,7 +129,14 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
                     ),
                   ],
                 ),
-                image: imageUrl.isNotEmpty ? Image.network(imageUrl) : null,
+                image: imageUrl != null
+                  ? Image.network(
+                    imageUrl,
+                    height: 140,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  )
+                  : null,
                 title: GFListTile(
                   title: Text(
                     destination,
