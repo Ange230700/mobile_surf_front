@@ -1,6 +1,8 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:exemple/page/models/lieu.dart';
+import 'package:exemple/page/detail/detail.dart';
 
 void main() {
   runApp(MyApp());
@@ -26,18 +28,31 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
-  void getNext() {
-    current = WordPair.random();
-    notifyListeners();
-  }
-   var favorites = <WordPair>[];
+  // 1) TA LISTE DE LIEUX (initialise-la ici ou récupère-la via un service)
+  final List<Lieu> lieux = [
+    Lieu(
+      id: 'eiffel',
+      nom: 'Tour Eiffel',
+      description: 'Un monument célèbre à Paris.',
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwToOo7kPicv1kC5UqWZ28ksv4FrlwknRNZA&s',
+    ),
+    Lieu(
+      id: 'louvre',
+      nom: 'Musée du Louvre',
+      description: 'Le plus grand musée du monde.',
+      imageUrl: 'https://i.familiscope.fr/2000x1125/smart/2024/01/22/musee-louvre-pyramide-incontournable-paris.jpg',
+    ),
+  ];
 
-  void toggleFavorite() {
-    if (favorites.contains(current)) {
-      favorites.remove(current);
+  
+  final List<Lieu> favorites = [];
+
+  
+  void toggleFavorite(Lieu lieu) {
+    if (favorites.contains(lieu)) {
+      favorites.remove(lieu);
     } else {
-      favorites.add(current);
+      favorites.add(lieu);
     }
     notifyListeners();
   }
@@ -65,7 +80,7 @@ class FavoritesPage extends StatelessWidget {
         for (var pair in appState.favorites)
           ListTile(
             leading: Icon(Icons.favorite),
-            title: Text(pair.asLowerCase),
+           
           ),
       ],
     );
@@ -84,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Widget page;
 switch (selectedIndex) {
   case 0:
-    page = GeneratorPage();
+    page = LieuxPage();
     break;
   case 1:
     page = FavoritesPage();
@@ -135,49 +150,47 @@ switch (selectedIndex) {
   }
 }
 
-class GeneratorPage extends StatelessWidget {
+class LieuxPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var pair = appState.current;
+    final appState = context.watch<MyAppState>();
 
-    IconData icon;
-    if (appState.favorites.contains(pair)) {
-      icon = Icons.favorite;
-    } else {
-      icon = Icons.favorite_border;
-    }
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: appState.lieux.length,
+      itemBuilder: (context, index) {
+        final lieu = appState.lieux[index];
+        final isFav = appState.favorites.contains(lieu);
 
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          BigCard(pair: pair),
-          SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton.icon(
-                onPressed: () {
-                  appState.toggleFavorite();
-                },
-                icon: Icon(icon),
-                label: Text('Like'),
-              ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  appState.getNext();
-                },
-                child: Text('Next'),
-              ),
-            ],
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          child: ListTile(
+            contentPadding: const EdgeInsets.all(12),
+            leading: Image.network(lieu.imageUrl, width: 60, fit: BoxFit.cover),
+            title: Text(lieu.nom, style: TextStyle(fontSize: 18)),
+            subtitle: Text(
+              lieu.description,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: IconButton(
+              icon: Icon(isFav ? Icons.favorite : Icons.favorite_border),
+              onPressed: () => appState.toggleFavorite(lieu),
+            ),
+            onTap: () {
+              // Navigation vers le détail
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => DetailPage(lieu: lieu)),
+              );
+            },
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
+
 
 class BigCard extends StatelessWidget {
   const BigCard({
