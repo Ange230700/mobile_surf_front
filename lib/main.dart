@@ -161,12 +161,10 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
                     ),
                   ),
                 ),
-                content: Flexible(
-                  child: Text(
-                    'Season: $seasonStart to $seasonEnd',
-                    style: GoogleFonts.josefinSans(fontSize: 12, color: primary),
-                    softWrap: true,
-                  ),
+                content: Text(
+                  'Season: $seasonStart to $seasonEnd',
+                  style: GoogleFonts.josefinSans(fontSize: 12, color: primary),
+                  softWrap: true,
                 ),
               );
             },
