@@ -1,6 +1,9 @@
 import 'package:english_words/english_words.dart';
+import 'package:exemple/components/header.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:exemple/components/footer.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -95,39 +98,24 @@ switch (selectedIndex) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Scaffold(
-          body: Row(
-            children: [
-              Expanded(
-            flex: 0, // vous pouvez augmenter/diminuer ce nombre
-              child:SafeArea(
-                child: NavigationRail(
-                  extended: constraints.maxWidth >= 600,
-                  destinations: [
-                    NavigationRailDestination(
-                      icon: Icon(Icons.home),
-                      label: Text('Home'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.favorite),
-                      label: Text('Favorites'),
-                    ),
-                  ],
-                  selectedIndex: selectedIndex,
-                  onDestinationSelected: (value) {
-                    setState(() {
-                      selectedIndex = value;
-                    });
-                  },
-                ),
-              ),
-              ),
-              Expanded(
-                child: Container(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  child: page,
-                ),
-              ),
-            ],
+          appBar: AppBar(
+            title: Header(title: 'Spot Surf'),
+            centerTitle: true,
+            backgroundColor:const Color(0xFF0E5386),
+          ),
+          body: page,
+            
+          bottomNavigationBar: Footer(
+            onHomePressed: () {
+              setState(() {
+                selectedIndex = 0;
+              });
+            },
+            onFavoritesPressed: () {
+              setState(() {
+                selectedIndex = 1;
+              });
+            },
           ),
         );
       }
