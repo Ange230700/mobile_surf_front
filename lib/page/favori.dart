@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:exemple/main.dart';
 
 class FavoritesPage extends StatelessWidget {
   final List<dynamic> spots;
   final Set<int> favoriteIndices;
 
   const FavoritesPage({
-    Key? key,
+    super.key,
     required this.spots,
     required this.favoriteIndices,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +24,9 @@ class FavoritesPage extends StatelessWidget {
         final photos = record['Photos'] as List<dynamic>?;
         String imageUrl = '';
         if (photos != null && photos.isNotEmpty) {
-          imageUrl = _SurfSpotsGridState()._cleanUrl(photos[0]['url'] as String);
+          imageUrl = _SurfSpotsGridState()._cleanUrl(
+            photos[0]['url'] as String,
+          );
         }
 
         return Card(
@@ -34,16 +34,14 @@ class FavoritesPage extends StatelessWidget {
             children: [
               if (imageUrl.isNotEmpty) Image.network(imageUrl),
               Text(destination),
-              Text('Difficulty: \$difficulty'),
-              Text('Season: \$seasonStart - \$seasonEnd'),
+              Text('Difficulty: $difficulty'),
+              Text('Season: $seasonStart - $seasonEnd'),
             ],
           ),
         );
       },
     );
   }
-  
-
 }
 
 class _SurfSpotsGridState {

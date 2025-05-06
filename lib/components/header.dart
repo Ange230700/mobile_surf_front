@@ -3,12 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 class Header extends StatelessWidget {
   final String title;
-  const Header({Key? key, 
-  required this.title
-  });
-  
-  @override
+  const Header({super.key, required this.title});
 
+  @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -18,13 +15,13 @@ class Header extends StatelessWidget {
       ),
       child: Text(
         title,
-          style: GoogleFonts.josefinSans(    
+        style: GoogleFonts.josefinSans(
           textStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onPrimary,
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-         ),
-       ),
+            color: Theme.of(context).colorScheme.onPrimary,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }
