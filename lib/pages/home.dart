@@ -6,7 +6,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import '../components/card.dart';
 import '../components/footer.dart';
 import '../components/header.dart';
-import '../page/favori.dart';
+import 'favori.dart';
 
 class SurfSpotsGrid extends StatefulWidget {
   const SurfSpotsGrid({super.key});
