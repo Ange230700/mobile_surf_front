@@ -41,76 +41,78 @@ class DetailPage extends StatelessWidget {
               color: Colors.black.withOpacity(0.3),
             ),
           ),
-          // Carte en bas à droite
+          // Carte en bas à droite - CORRIGÉ
           Positioned(
             bottom: 32,
             right: 16,
-            left: 16,
-            child: Card(
-              color: const Color(0xCCA2D8F7),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 8,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      destination,
-                      style: const TextStyle(
-                        fontFamily: 'JosefinSans',
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+            child: Container(
+              width: 250, // Largeur fixe pour la Card
+              child: Card(
+                color: const Color(0xCCA2D8F7),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                elevation: 8,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        destination,
+                        style: const TextStyle(
+                          fontFamily: 'JosefinSans',
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Type: $surfBreak',
-                      style: const TextStyle(
-                        fontFamily: 'JosefinSans',
-                        fontSize: 16,
-                        color: Colors.black,
+                      const SizedBox(height: 8),
+                      Text(
+                        'Type: $surfBreak',
+                        style: const TextStyle(
+                          fontFamily: 'JosefinSans',
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Difficulty: ${difficulty?.toString() ?? 'N/A'} / 5',
-                      style: const TextStyle(
-                        fontFamily: 'JosefinSans',
-                        fontSize: 16,
-                        color: Colors.black,
+                      const SizedBox(height: 4),
+                      Text(
+                        'Difficulty: ${difficulty?.toString() ?? 'N/A'} / 5',
+                        style: const TextStyle(
+                          fontFamily: 'JosefinSans',
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Season: $seasonStart to $seasonEnd',
-                      style: const TextStyle(
-                        fontFamily: 'JosefinSans',
-                        fontSize: 16,
-                        color: Colors.black,
+                      const SizedBox(height: 4),
+                      Text(
+                        'Season: $seasonStart to $seasonEnd',
+                        style: const TextStyle(
+                          fontFamily: 'JosefinSans',
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
+                      const SizedBox(height: 8),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                        ),
+                        onPressed: () {
+                          final url = fields['Magic Seaweed Link'];
+                          if (url != null) {
+                            // You can use url_launcher here to open the link if needed
+                          }
+                        },
+                        child: const Text(
+                          'View Surf Report',
+                          style: TextStyle(color: Colors.black),
+                        ),
                       ),
-                      onPressed: () {
-                        final url = fields['Magic Seaweed Link'];
-                        if (url != null) {
-                          // You can use url_launcher here to open the link if needed
-                        }
-                      },
-                      child: const Text(
-                        'View Surf Report',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
