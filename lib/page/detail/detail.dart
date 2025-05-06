@@ -13,43 +13,87 @@ class DetailPage extends StatelessWidget {
     final isFav = context.watch<MyAppState>().favorites.contains(lieu);
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text(lieu.nom),
-        actions: [
-          IconButton(
-            icon: Icon(isFav ? Icons.favorite : Icons.favorite_border),
-            onPressed: () => context.read<MyAppState>().toggleFavorite(lieu),
-          )
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text(''), // Titre déplacé dans la carte
+      ),
+      body: Stack(
+        children: [
+          // Image de fond pleine page
+          Positioned.fill(
+            child: Image.network(
+              lieu.imageUrl,
+              fit: BoxFit.cover,
+            ),
+          ),
+          // Fond semi-transparent optionnel
+          Positioned.fill(
+            child: Container(
+              color: Colors.black.withOpacity(0.3),
+            ),
+          ),
+          // Carte en bas à droite
+          Positioned(
+            bottom: 32,
+            right: 16,
+            child: Card(
+              color: const Color(0xCCA2D8F7),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              elevation: 8,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.25, // max 70% de la largeur écran
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              lieu.nom,
+                              style: const TextStyle(
+                                fontFamily: 'JoseFinSans',
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              isFav ? Icons.favorite : Icons.favorite_border,
+                              color: Colors.black,
+                            ),
+                            onPressed: () => context.read<MyAppState>().toggleFavorite(lieu),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        lieu.description,
+                        style: const TextStyle(
+                          fontFamily: 'JoseFinSans',
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: ConstrainedBox(
-        // on force une hauteur min = hauteur de l'écran
-        constraints: BoxConstraints(
-            minHeight: MediaQuery.of(context).size.height,
-        ),
-        child: Column(
-            // ici, on centre verticalement
-            mainAxisAlignment: MainAxisAlignment.center,
-            // et horizontalement
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-                Image.network(lieu.imageUrl),
-                const SizedBox(height: 16),
-                Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                    lieu.description,
-                    style: const TextStyle(fontSize: 18),
-                    textAlign: TextAlign.center, // pour que le texte soit bien centré
-                    ),
-                ),
-                // … autres widgets
-                ],
-            ), 
-        ),
-      ),
-
     );
   }
 }
