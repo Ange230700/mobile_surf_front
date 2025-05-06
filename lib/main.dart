@@ -1,208 +1,176 @@
-import 'package:english_words/english_words.dart';
+// lib/main.dart
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:google_fonts/google_fonts.dart';
+import 'components/header.dart';
+import 'components/footer.dart';
+import 'page/favori.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MainApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MainApp extends StatelessWidget {
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
-      child: MaterialApp(
-        title: 'Namer App',
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+    return MaterialApp(
+      title: 'Surf Spots',
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
+        colorScheme: const ColorScheme.light(
+          primary: Color(0xFF0E5386),
+          secondary: Color(0xFFA2D8F7),
+          surface: Colors.white,
         ),
-        home: MyHomePage(),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF0E5386),
+          foregroundColor: Colors.white,
+        ),
+        textTheme: GoogleFonts.josefinSansTextTheme(),
       ),
+      home: const SurfSpotsGrid(),
     );
   }
 }
 
-class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
-  void getNext() {
-    current = WordPair.random();
-    notifyListeners();
-  }
-   var favorites = <WordPair>[];
+class SurfSpotsGrid extends StatefulWidget {
+  const SurfSpotsGrid({super.key});
 
-  void toggleFavorite() {
-    if (favorites.contains(current)) {
-      favorites.remove(current);
-    } else {
-      favorites.add(current);
-    }
-    notifyListeners();
-  }
+  @override
+  State<SurfSpotsGrid> createState() => _SurfSpotsGridState();
 }
 
+class _SurfSpotsGridState extends State<SurfSpotsGrid> {
+  late Future<List<dynamic>> _spotsFuture;
+  int selectedIndex = 0;
+  final Set<int> _favoriteIndices = {};
 
-class FavoritesPage extends StatelessWidget {
+  @override
+  void initState() {
+    super.initState();
+    _spotsFuture = _loadSurfSpots();
+  }
+
+  Future<List<dynamic>> _loadSurfSpots() async {
+    final jsonString = await rootBundle.loadString('assets/data/records.json');
+    final Map<String, dynamic> data = json.decode(jsonString);
+    return data['records'] as List<dynamic>;
+  }
+
+  String _cleanUrl(String raw) => raw.replaceAll(RegExp(r'[<>;]'), '');
+
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
+    return Scaffold(
+      appBar: AppBar(
+        title: Header(title: 'Surf Spots'),
+        centerTitle: true,
+      ),
+      body: FutureBuilder<List<dynamic>>(
+        future: _spotsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: \${snapshot.error}'));
+          }
+          final spots = snapshot.data!;
+          // Build pages
+          Widget page;
+          switch (selectedIndex) {
+            case 0:
+              // Grid view page
+              page = GridView.builder(
+                padding: const EdgeInsets.all(8),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: 0.7,
+                ),
+                itemCount: spots.length,
+                itemBuilder: (context, index) {
+                  final record = spots[index]['fields'] as Map<String, dynamic>;
+                  final destination = record['Destination'] as String;
+                  final difficulty = record['Difficulty Level'].toString();
+                  final seasonStart = record['Peak Surf Season Begins'] as String;
+                  final seasonEnd = record['Peak Surf Season Ends'] as String;
+                  final photos = record['Photos'] as List<dynamic>?;
+                  String imageUrl = '';
+                  if (photos != null && photos.isNotEmpty) {
+                    imageUrl = _SurfSpotsGridState()._cleanUrl(photos[0]['url'] as String);
+                    //imageUrl = _cleanUrl(photos[0]['url'] as String);
+                  }
+                  final isFavorite = _favoriteIndices.contains(index);
 
-    if (appState.favorites.isEmpty) {
-      return Center(
-        child: Text('No favorites yet.'),
-      );
-    }
-
-    return ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Text('You have '
-              '${appState.favorites.length} favorites:'),
-        ),
-        for (var pair in appState.favorites)
-          ListTile(
-            leading: Icon(Icons.favorite),
-            title: Text(pair.asLowerCase),
-          ),
-      ],
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  var selectedIndex = 0; 
-  @override
-  Widget build(BuildContext context) {
-    Widget page;
-switch (selectedIndex) {
-  case 0:
-    page = GeneratorPage();
-    break;
-  case 1:
-    page = FavoritesPage();
-    break;
-  default:
-    throw UnimplementedError('no widget for $selectedIndex');
-}
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Scaffold(
-          body: Row(
-            children: [
-              Expanded(
-            flex: 0, // vous pouvez augmenter/diminuer ce nombre
-              child:SafeArea(
-                child: NavigationRail(
-                  extended: constraints.maxWidth >= 600,
-                  destinations: [
-                    NavigationRailDestination(
-                      icon: Icon(Icons.home),
-                      label: Text('Home'),
+                  return Card(
+                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                    if (imageUrl.isNotEmpty)
+                      Expanded(child: Image.network(imageUrl, fit: BoxFit.cover)),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(destination, style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text('Difficulty: $difficulty'),
+                          Text('Season: $seasonStart - $seasonEnd'),
+                        ],
+                      ),
                     ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.favorite),
-                      label: Text('Favorites'),
+                    // ← NOUVEAU: bouton Like / Dislike
+                    OverflowBar(
+                      alignment: MainAxisAlignment.end,
+                      children: [
+                        IconButton(
+                          icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+                          color: isFavorite
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).colorScheme.secondary,
+                          onPressed: () {
+                            setState(() {
+                              if (isFavorite) {
+                                _favoriteIndices.remove(index);
+                              } else {
+                                _favoriteIndices.add(index);
+                              }
+                            });
+                          },
+                       ),
+                      ],
                     ),
                   ],
-                  selectedIndex: selectedIndex,
-                  onDestinationSelected: (value) {
-                    setState(() {
-                      selectedIndex = value;
-                    });
-                  },
                 ),
-              ),
-              ),
-              Expanded(
-                child: Container(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  child: page,
-                ),
-              ),
-            ],
-          ),
-        );
-      }
-    );
-  }
-}
-
-class GeneratorPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var pair = appState.current;
-
-    IconData icon;
-    if (appState.favorites.contains(pair)) {
-      icon = Icons.favorite;
-    } else {
-      icon = Icons.favorite_border;
-    }
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          BigCard(pair: pair),
-          SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton.icon(
-                onPressed: () {
-                  appState.toggleFavorite();
-                },
-                icon: Icon(icon),
-                label: Text('Like'),
-              ),
-              SizedBox(width: 10),
-              ElevatedButton(
-                onPressed: () {
-                  appState.getNext();
-                },
-                child: Text('Next'),
-              ),
-            ],
-          ),
-        ],
+              );
+             },
+           );
+              break;
+            case 1:
+              // Favorites page, pass via constructor
+              page = FavoritesPage(
+                spots: snapshot.data!,
+                favoriteIndices: _favoriteIndices,
+              );
+              break;
+            default:
+              page = const SizedBox.shrink();
+          }
+          return page;
+        },
+      ),
+      bottomNavigationBar: Footer(
+        onHomePressed: () => setState(() => selectedIndex = 0),
+        onFavoritesPressed: () => setState(() => selectedIndex = 1),
       ),
     );
   }
 }
 
-class BigCard extends StatelessWidget {
-  const BigCard({
-    super.key,
-    required this.pair,
-  });
 
-  final WordPair pair;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final style = theme.textTheme.displayMedium!.copyWith(
-      color: theme.colorScheme.onPrimary,
-    );
-    return Card(
-      color: theme.colorScheme.primary,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Text(
-          pair.asLowerCase,
-          style: style,
-          semanticsLabel: "${pair.first} ${pair.second}",
-        ),
-        ),
-    );
-  }
-}
+// Removed the _cleanUrl class as it is unnecessary.
