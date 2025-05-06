@@ -1,8 +1,8 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:exemple/page/models/lieu.dart';
-import 'package:exemple/page/detail/detail.dart';
+import 'package:exemple/pages/models/lieu.dart';
+import 'package:exemple/pages/detail/detail.dart';
 
 void main() {
   runApp(MyApp());

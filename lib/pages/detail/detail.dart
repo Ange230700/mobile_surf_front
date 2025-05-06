@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:exemple/main.dart';
-import 'package:exemple/page/models/lieu.dart';
+import 'package:exemple/pages/models/lieu.dart';
 
 class DetailPage extends StatelessWidget {
 
