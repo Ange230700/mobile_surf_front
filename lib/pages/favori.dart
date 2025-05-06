@@ -1,52 +1,40 @@
+// lib\pages\favori.dart
+
 import 'package:flutter/material.dart';
+import '../components/card.dart';
 
 class FavoritesPage extends StatelessWidget {
   final List<dynamic> spots;
   final Set<int> favoriteIndices;
+  final void Function(int) onFavoriteToggle;
 
   const FavoritesPage({
     super.key,
     required this.spots,
     required this.favoriteIndices,
+    required this.onFavoriteToggle,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return GridView.builder(
+      padding: const EdgeInsets.all(8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: 0.7,
+      ),
       itemCount: favoriteIndices.length,
       itemBuilder: (context, index) {
         final spotIndex = favoriteIndices.elementAt(index);
-        final record = spots[spotIndex]['fields'] as Map<String, dynamic>;
-        final destination = record['Destination'] as String;
-        final difficulty = record['Difficulty Level'].toString();
-        final seasonStart = record['Peak Surf Season Begins'] as String;
-        final seasonEnd = record['Peak Surf Season Ends'] as String;
-        final photos = record['Photos'] as List<dynamic>?;
-        String imageUrl = '';
-        if (photos != null && photos.isNotEmpty) {
-          imageUrl = _SurfSpotsGridState()._cleanUrl(
-            photos[0]['url'] as String,
-          );
-        }
-
-        return Card(
-          child: Column(
-            children: [
-              if (imageUrl.isNotEmpty) Image.network(imageUrl),
-              Text(destination),
-              Text('Difficulty: $difficulty'),
-              Text('Season: $seasonStart - $seasonEnd'),
-            ],
-          ),
+        final record = spots[spotIndex] as Map<String, dynamic>;
+        return SurfSpotCard(
+          record: record,
+          isFavorite: true,
+          onFavoriteToggle: () => onFavoriteToggle(spotIndex),
         );
       },
     );
-  }
-}
-
-class _SurfSpotsGridState {
-  String _cleanUrl(String photo) {
-    // Example implementation: return the photo URL as is
-    return photo;
   }
 }

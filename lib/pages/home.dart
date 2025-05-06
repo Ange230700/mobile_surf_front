@@ -81,6 +81,11 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
               page = FavoritesPage(
                 spots: snapshot.data!,
                 favoriteIndices: _favoriteIndices,
+                onFavoriteToggle: (int index) {
+                  setState(() {
+                    _favoriteIndices.remove(index);
+                  });
+                },
               );
               break;
             default:
