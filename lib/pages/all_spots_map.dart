@@ -61,7 +61,7 @@ class _AllSpotsMapState extends State<AllSpotsMap> {
     return Scaffold(
       appBar: AppBar(title: const Text('All Surf Spots Map')),
       body: FlutterMap(
-        options: MapOptions(initialCenter: _center, initialZoom: 13.0),
+        options: MapOptions(initialCenter: _center, initialZoom: 3.0),
         children: [
           TileLayer(
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',

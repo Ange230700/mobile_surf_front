@@ -57,7 +57,7 @@ class DetailPage extends StatelessWidget {
               child: FlutterMap(
                 options: MapOptions(
                   initialCenter: spotLatLng,
-                  initialZoom: 13.0,
+                  initialZoom: 3.0,
                 ),
                 children: [
                   TileLayer(
