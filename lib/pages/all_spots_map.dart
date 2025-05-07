@@ -27,21 +27,26 @@ class _AllSpotsMapState extends State<AllSpotsMap> {
   Future<void> _loadAllSpots() async {
     final jsonString = await rootBundle.loadString('assets/data/records.json');
     final data = json.decode(jsonString) as Map<String, dynamic>;
-    final List recs = data['records'] as List;
+    final recs = data['records'] as List;
 
     final List<Marker> markers = [];
     for (var rec in recs) {
       final fields = rec['fields'] as Map<String, dynamic>;
       final geo = fields['Geocode'] as String;
-      final latLng = parseLatLng(geo);
-      markers.add(
-        Marker(
-          point: latLng,
-          width: 30,
-          height: 30,
-          child: const Icon(Icons.location_on, size: 30),
-        ),
-      );
+      try {
+        final latLng = parseLatLng(geo);
+        markers.add(
+          Marker(
+            point: latLng,
+            width: 30,
+            height: 30,
+            child: const Icon(Icons.location_on, size: 30),
+          ),
+        );
+      } catch (e) {
+        // skip invalid geocodes
+        continue;
+      }
     }
 
     setState(() {
@@ -49,6 +54,7 @@ class _AllSpotsMapState extends State<AllSpotsMap> {
       if (markers.isNotEmpty) _center = markers.first.point;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
