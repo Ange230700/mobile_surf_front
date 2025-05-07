@@ -7,12 +7,15 @@ version: 0.1.0
 
 environment:
   sdk: ^3.7.2
+  flutter: ">=3.7.0"
 
 dependencies:
   flutter:
     sdk: flutter
+  flutter_dotenv: ^5.2.1
   getwidget: ^6.0.0
   google_fonts: ^6.2.1
+  http: ^1.4.0
 
 dev_dependencies:
   flutter_test:
@@ -23,3 +26,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/data/records.json
+    - .env
