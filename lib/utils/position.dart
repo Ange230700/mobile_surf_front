@@ -4,45 +4,38 @@ import 'dart:convert';
 import 'package:latlong2/latlong.dart';
 
 LatLng parseLatLng(String rawGeocode) {
+  // 1) First, try to decode as Base64-encoded JSON
   try {
-    // detect a Base64 payload (letters, digits, +, /, padding =)
-    final base64Reg = RegExp(r'^[A-Za-z0-9+/]+={0,2}$');
-    if (base64Reg.hasMatch(rawGeocode)) {
-      final decoded = utf8.decode(base64Decode(rawGeocode));
-      final data = json.decode(decoded);
-      if (data is Map<String, dynamic> && data.containsKey('o')) {
-        final o = data['o'];
-        if (o is Map<String, dynamic> &&
-            o.containsKey('lat') &&
-            o.containsKey('lng')) {
-          return LatLng(
-            (o['lat'] as num).toDouble(),
-            (o['lng'] as num).toDouble(),
-          );
-        }
+    final decodedJson = utf8.decode(base64Decode(rawGeocode));
+    final data = json.decode(decodedJson);
+    if (data is Map<String, dynamic> && data.containsKey('o')) {
+      final o = data['o'];
+      if (o is Map<String, dynamic> &&
+          o.containsKey('lat') &&
+          o.containsKey('lng')) {
+        return LatLng(
+          (o['lat'] as num).toDouble(),
+          (o['lng'] as num).toDouble(),
+        );
       }
     }
   } catch (_) {
-    // if decoding/parsing fails, fall through to the next strategy
+    // ignore and fall through to next strategy
   }
 
+  // 2) If that fails, maybe it's a JSON array string: "[lat, lng]"
   try {
-    final data = json.decode(rawGeocode);
-    if (data is List && data.length >= 2) {
-      final lat =
-          (data[0] is num)
-              ? data[0].toDouble()
-              : double.parse(data[0].toString());
-      final lng =
-          (data[1] is num)
-              ? data[1].toDouble()
-              : double.parse(data[1].toString());
+    final arr = json.decode(rawGeocode);
+    if (arr is List && arr.length >= 2) {
+      final lat = (arr[0] as num).toDouble();
+      final lng = (arr[1] as num).toDouble();
       return LatLng(lat, lng);
     }
   } catch (_) {
-    // fall through
+    // ignore
   }
 
+  // 3) Lastly, try a simple comma-separated "lat,lng"
   final parts = rawGeocode.split(',');
   if (parts.length == 2) {
     final lat = double.tryParse(parts[0].trim());

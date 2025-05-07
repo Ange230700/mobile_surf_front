@@ -15,8 +15,9 @@ class AllSpotsMap extends StatefulWidget {
 }
 
 class _AllSpotsMapState extends State<AllSpotsMap> {
+  final MapController _mapController = MapController();
   List<Marker> _markers = [];
-  LatLng _center = LatLng(0, 0);
+  // you can remove _center; we'll fit bounds instead
 
   @override
   void initState() {
@@ -45,23 +46,38 @@ class _AllSpotsMapState extends State<AllSpotsMap> {
         );
       } catch (e) {
         // skip invalid geocodes
-        continue;
       }
     }
 
-    setState(() {
-      _markers = markers;
-      if (markers.isNotEmpty) _center = markers.first.point;
+    if (markers.isEmpty) return;
+
+    setState(() => _markers = markers);
+
+    // once the map has rebuilt with markers, fit bounds:
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final bounds = LatLngBounds.fromPoints(
+        _markers.map((m) => m.point).toList(),
+      );
+      _mapController.fitCamera(
+        CameraFit.bounds(
+          bounds: bounds,
+          padding: const EdgeInsets.all(24),
+        ),
+      );
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('All Surf Spots Map')),
       body: FlutterMap(
-        options: MapOptions(initialCenter: _center, initialZoom: 3.0),
+        mapController: _mapController,
+        options: MapOptions(
+          // zoom/center here only controls initial state, fitBounds will override
+          initialCenter: LatLng(0, 0),
+          initialZoom: 2,
+        ),
         children: [
           TileLayer(
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',

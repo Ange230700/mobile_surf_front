@@ -48,7 +48,7 @@ class DetailPage extends StatelessWidget {
             child: Container(color: Colors.black.withAlpha(77)),
           ),
           Positioned(
-            bottom: 32,
+            bottom: 250,
             left: 16,
             right: 16,
             height: 200,
@@ -85,9 +85,8 @@ class DetailPage extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom: 400,
-            right: 0,
-            left: 0,
+            bottom: 32,
+            right: 16,
             child: SizedBox(
               width: 250,
               child: Card(
