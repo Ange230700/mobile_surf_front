@@ -14,7 +14,12 @@ class DetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final fields = record['fields'] ?? {};
     final rawGeocode = fields["Geocode"] as String? ?? '';
-    final LatLng spotLatLng = parseLatLng(rawGeocode);
+    LatLng spotLatLng;
+    try {
+      spotLatLng = parseLatLng(rawGeocode);
+    } catch (e) {
+      spotLatLng = LatLng(0, 0);
+    }
     final String imageUrl =
         (fields['Photos'] != null && fields['Photos'].isNotEmpty)
             ? fields['Photos'][0]['url']
@@ -78,8 +83,9 @@ class DetailPage extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom: 32,
-            right: 16,
+            bottom: 400,
+            right: 0,
+            left: 0,
             child: SizedBox(
               width: 250,
               child: Card(
