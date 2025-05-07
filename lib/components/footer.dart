@@ -1,6 +1,7 @@
 // lib/components/footer.dart
 
 import 'package:flutter/material.dart';
+import '../pages/all_spots_map.dart';
 
 class Footer extends StatelessWidget {
   final VoidCallback onHomePressed;
@@ -30,6 +31,14 @@ class Footer extends StatelessWidget {
               icon: const Icon(Icons.favorite),
               tooltip: 'Favoris',
               onPressed: onFavoritesPressed,
+            ),
+            IconButton(
+              icon: Icon(Icons.map),
+              onPressed:
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const AllSpotsMap()),
+                  ),
             ),
           ],
         ),

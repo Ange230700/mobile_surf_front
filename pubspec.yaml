@@ -2,7 +2,7 @@
 
 name: stuff
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
@@ -11,8 +11,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_map: ^8.1.1
+  flutter_map_cancellable_tile_provider: ^3.1.0
   getwidget: ^6.0.0
   google_fonts: ^6.2.1
+  latlong2: ^0.9.1
   provider: ^6.1.5
 
 dev_dependencies:

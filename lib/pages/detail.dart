@@ -1,4 +1,10 @@
+// lib\pages\detail.dart
+
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
+import 'package:latlong2/latlong.dart';
+import '../utils/position.dart';
 
 class DetailPage extends StatelessWidget {
   final Map<String, dynamic> record;
@@ -8,13 +14,22 @@ class DetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fields = record['fields'] ?? {};
-    final String imageUrl = (fields['Photos'] != null && fields['Photos'].isNotEmpty)
-        ? fields['Photos'][0]['url']
-        : 'https://via.placeholder.com/400x300.png?text=No+Image';
+    final rawGeocode = fields["Geocode"] as String? ?? '';
+    LatLng spotLatLng;
+    try {
+      spotLatLng = parseLatLng(rawGeocode);
+    } catch (e) {
+      spotLatLng = LatLng(0, 0);
+    }
+    final String imageUrl =
+        (fields['Photos'] != null && fields['Photos'].isNotEmpty)
+            ? fields['Photos'][0]['url']
+            : 'https://via.placeholder.com/400x300.png?text=No+Image';
     final String destination = fields['Destination'] ?? 'Unknown Spot';
-    final String surfBreak = (fields['Surf Break'] != null && fields['Surf Break'].isNotEmpty)
-        ? (fields['Surf Break'] as List).join(', ')
-        : 'Unknown Type';
+    final String surfBreak =
+        (fields['Surf Break'] != null && fields['Surf Break'].isNotEmpty)
+            ? (fields['Surf Break'] as List).join(', ')
+            : 'Unknown Type';
     final int? difficulty = fields['Difficulty Level'];
     final String seasonStart = fields['Peak Surf Season Begins'] ?? '';
     final String seasonEnd = fields['Peak Surf Season Ends'] ?? '';
@@ -28,25 +43,52 @@ class DetailPage extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          // Image de fond pleine page
+          Positioned.fill(child: Image.network(imageUrl, fit: BoxFit.cover)),
           Positioned.fill(
-            child: Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
+            child: Container(color: Colors.black.withAlpha(77)),
+          ),
+          Positioned(
+            bottom: 250,
+            left: 16,
+            right: 16,
+            height: 200,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: FlutterMap(
+                options: MapOptions(
+                  initialCenter: spotLatLng,
+                  initialZoom: 3.0,
+                ),
+                children: [
+                  TileLayer(
+                    urlTemplate:
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    tileProvider: CancellableNetworkTileProvider(),
+                    maxZoom: 19,
+                  ),
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        point: spotLatLng,
+                        width: 40,
+                        height: 40,
+                        child: const Icon(
+                          Icons.location_pin,
+                          size: 40,
+                          color: Colors.redAccent,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-          // Fond semi-transparent optionnel
-          Positioned.fill(
-            child: Container(
-              color: Colors.black.withOpacity(0.3),
-            ),
-          ),
-          // Carte en bas à droite - CORRIGÉ
           Positioned(
             bottom: 32,
             right: 16,
-            child: Container(
-              width: 250, // Largeur fixe pour la Card
+            child: SizedBox(
+              width: 250,
               child: Card(
                 color: const Color(0xCCA2D8F7),
                 shape: RoundedRectangleBorder(

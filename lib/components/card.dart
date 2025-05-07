@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../pages/detail.dart';  // <-- Ajout de l'import pour la page détail
+import '../pages/detail.dart';
 
 class SurfSpotCard extends StatelessWidget {
   final Map<String, dynamic> record;
@@ -39,9 +39,7 @@ class SurfSpotCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => DetailPage(record: record),  // <-- On passe le record complet
-          ),
+          MaterialPageRoute(builder: (context) => DetailPage(record: record)),
         );
       },
       child: GFCard(
@@ -51,19 +49,21 @@ class SurfSpotCard extends StatelessWidget {
         showImage: rawUrl != null,
         elevation: 4,
         color: surface,
-        image: rawUrl != null
-            ? Image.network(
-                rawUrl,
-                height: 120,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (c, e, s) => Container(
+        image:
+            rawUrl != null
+                ? Image.network(
+                  rawUrl,
                   height: 120,
-                  color: Colors.grey[200],
-                  child: const Icon(Icons.broken_image, size: 40),
-                ),
-              )
-            : null,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder:
+                      (c, e, s) => Container(
+                        height: 120,
+                        color: Colors.grey[200],
+                        child: const Icon(Icons.broken_image, size: 40),
+                      ),
+                )
+                : null,
         title: GFListTile(
           title: Text(
             destination,
