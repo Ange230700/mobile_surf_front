@@ -2,9 +2,10 @@
 
 import 'package:flutter/material.dart';
 import '../components/card.dart';
+import '../models/surf_spot.dart';
 
 class FavoritesPage extends StatelessWidget {
-  final List<dynamic> spots;
+  final List<SurfSpot> spots;
   final Set<int> favoriteIndices;
   final void Function(int) onFavoriteToggle;
 
@@ -28,9 +29,9 @@ class FavoritesPage extends StatelessWidget {
       itemCount: favoriteIndices.length,
       itemBuilder: (context, index) {
         final spotIndex = favoriteIndices.elementAt(index);
-        final record = spots[spotIndex] as Map<String, dynamic>;
+        final spot = spots[spotIndex];
         return SurfSpotCard(
-          record: record,
+          spot: spot,
           isFavorite: true,
           onFavoriteToggle: () => onFavoriteToggle(spotIndex),
         );
