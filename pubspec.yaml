@@ -7,14 +7,17 @@ version: 0.1.0
 
 environment:
   sdk: ^3.7.2
+  flutter: ">=3.7.0"
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_map: ^8.1.1
   flutter_map_cancellable_tile_provider: ^3.1.0
+  flutter_dotenv: ^5.2.1
   getwidget: ^6.0.0
   google_fonts: ^6.2.1
+  http: ^1.4.0
   latlong2: ^0.9.1
   provider: ^6.1.5
 
@@ -27,3 +30,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/data/records.json
+    - .env

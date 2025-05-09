@@ -2,11 +2,14 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
+//import 'package:flutter/services.dart' show rootBundle;
 import '../components/card.dart';
 import '../components/footer.dart';
 import '../components/header.dart';
 import 'favori.dart';
+import '../services/airtable_api.dart';
+import '../models/surf_spot.dart';
+
 
 class SurfSpotsGrid extends StatefulWidget {
   const SurfSpotsGrid({super.key});
@@ -16,21 +19,23 @@ class SurfSpotsGrid extends StatefulWidget {
 }
 
 class _SurfSpotsGridState extends State<SurfSpotsGrid> {
-  late Future<List<dynamic>> _spotsFuture;
+  late Future<List<SurfSpot>> _spotsFuture;
   int selectedIndex = 0;
+  final _api = AirtableApi();
   final Set<int> _favoriteIndices = {};
 
   @override
   void initState() {
     super.initState();
-    _spotsFuture = _loadSurfSpots();
+    _spotsFuture =  _api.fetchSurfSpots();
   }
 
-  Future<List<dynamic>> _loadSurfSpots() async {
-    final jsonString = await rootBundle.loadString('assets/data/records.json');
-    final Map<String, dynamic> data = json.decode(jsonString);
-    return data['records'] as List<dynamic>;
-  }
+  // Future<List<dynamic>> _loadSurfSpots() async {
+  //   final records = await AirtableService().fetchSurfSpots();
+  //   final jsonString = await rootBundle.loadString('assets/data/records.json');
+  //   final Map<String, dynamic> data = json.decode(jsonString);
+  //   return data['records'] as List<dynamic>;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -59,11 +64,11 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
                 ),
                 itemCount: spots.length,
                 itemBuilder: (context, index) {
-                  final record = spots[index];
+                  final spot = spots[index];
                   final isFavorite = _favoriteIndices.contains(index);
 
                   return SurfSpotCard(
-                    record: record,
+                    record: spot,
                     isFavorite: isFavorite,
                     onFavoriteToggle: () {
                       setState(() {
