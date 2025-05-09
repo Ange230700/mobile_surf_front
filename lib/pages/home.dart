@@ -1,15 +1,12 @@
 // lib/page/home.dart
 
-import 'dart:convert';
 import 'package:flutter/material.dart';
-//import 'package:flutter/services.dart' show rootBundle;
 import '../components/card.dart';
 import '../components/footer.dart';
 import '../components/header.dart';
 import 'favori.dart';
 import '../services/airtable_api.dart';
 import '../models/surf_spot.dart';
-
 
 class SurfSpotsGrid extends StatefulWidget {
   const SurfSpotsGrid({super.key});
@@ -27,28 +24,24 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
   @override
   void initState() {
     super.initState();
-    _spotsFuture =  _api.fetchSurfSpots();
+    _spotsFuture = _api.fetchSurfSpots();
   }
-
-  // Future<List<dynamic>> _loadSurfSpots() async {
-  //   final records = await AirtableService().fetchSurfSpots();
-  //   final jsonString = await rootBundle.loadString('assets/data/records.json');
-  //   final Map<String, dynamic> data = json.decode(jsonString);
-  //   return data['records'] as List<dynamic>;
-  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Header(title: 'Surf Spots'), centerTitle: true),
-      body: FutureBuilder<List<dynamic>>(
+      body: FutureBuilder<List<SurfSpot>>(
         future: _spotsFuture,
-        builder: (context, snapshot) {
+        builder: (context, AsyncSnapshot<List<SurfSpot>> snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (!snapshot.hasData) {
+            return Center(child: Text('No data'));
           }
           final spots = snapshot.data!;
           Widget page;
@@ -68,7 +61,7 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
                   final isFavorite = _favoriteIndices.contains(index);
 
                   return SurfSpotCard(
-                    record: spot,
+                    spot: spot,
                     isFavorite: isFavorite,
                     onFavoriteToggle: () {
                       setState(() {
