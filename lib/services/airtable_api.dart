@@ -12,10 +12,10 @@ class AirtableApi {
 
   /// Renvoie la liste des SurfSpot via Airtable
   Future<List<SurfSpot>> fetchSurfSpots() async {
-    final uri = Uri.parse(_baseUrl);  
+    final uri = Uri.parse(_baseUrl);
     final resp = await http.get(uri, headers: {
       'Authorization': 'Bearer $_apiKey',  
-      'Content-Type': 'application/json',
+     
     });
     if (resp.statusCode != 200) {
       throw Exception('Airtable API error: ${resp.statusCode}');
