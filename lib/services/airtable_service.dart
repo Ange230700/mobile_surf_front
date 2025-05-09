@@ -34,7 +34,7 @@ class _AirtableServiceState extends State<AirtableService> {
   Future<List<SurfSpot>> _fetchSurfSpots() async {
     final url = Uri.parse(AIRTABLE_BASE_URL);
     final response = await http.get(url, headers: {
-      'Authorization': 'Bearer _apiKey',
+      'Authorization': 'Bearer $AIRTABLE_API_KEY',
       'Content-Type': 'application/json',
     });
 

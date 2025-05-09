@@ -41,7 +41,7 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Header(title: 'Surf Spots'), centerTitle: true),
-      body: FutureBuilder<List<dynamic>>(
+      body: FutureBuilder<List<SurfSpot>>(
         future: _spotsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
@@ -68,7 +68,7 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
                   final isFavorite = _favoriteIndices.contains(index);
 
                   return SurfSpotCard(
-                    record: spot,
+                    record: spot.toJson(),
                     isFavorite: isFavorite,
                     onFavoriteToggle: () {
                       setState(() {
@@ -84,7 +84,7 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
               );
             case 1:
               page = FavoritesPage(
-                spots: snapshot.data!,
+                spots: spots.map((s) => s.toJson()).toList(),
                 favoriteIndices: _favoriteIndices,
                 onFavoriteToggle: (int index) {
                   setState(() {
