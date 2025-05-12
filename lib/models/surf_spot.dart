@@ -1,5 +1,8 @@
 // lib/models/surf_spot.dart
 
+import 'package:latlong2/latlong.dart';
+import '../utils/position.dart';
+
 class SurfSpot {
   final String id;
   final String destination;
@@ -9,6 +12,8 @@ class SurfSpot {
   final DateTime peakSeasonEnd;
   final String? photoUrl;
 
+  final LatLng location;
+
   SurfSpot({
     required this.id,
     required this.destination,
@@ -17,6 +22,7 @@ class SurfSpot {
     required this.peakSeasonStart,
     required this.peakSeasonEnd,
     this.photoUrl,
+    required this.location,
   });
 
   factory SurfSpot.fromJson(Map<String, dynamic> json) {
@@ -26,9 +32,18 @@ class SurfSpot {
     String? photo;
     final photos = fields['Photos'] as List<dynamic>?;
     if (photos != null && photos.isNotEmpty) {
-      final first = photos[0] as Map<String, dynamic>;
-      photo = first['url'] as String?;
+      photo = (photos[0] as Map<String, dynamic>)['url'] as String?;
     }
+
+    // parse the geocode into a LatLng:
+    final rawGeocode = fields['Geocode'] as String? ?? '';
+    LatLng loc;
+    try {
+      loc = parseLatLng(rawGeocode);
+    } catch (_) {
+      loc = const LatLng(0, 0);
+    }
+
     return SurfSpot(
       id: json['id'] as String,
       destination: fields['Destination'] as String? ?? 'Unknown',
@@ -43,6 +58,7 @@ class SurfSpot {
             DateTime.now().toIso8601String(),
       ),
       photoUrl: photo,
+      location: loc,
     );
   }
 }

@@ -1,11 +1,11 @@
 // lib/pages/detail.dart
 
 import 'package:flutter/material.dart';
-import '../services/airtable_api.dart';
-import '../utils/position.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:latlong2/latlong.dart';
+import '../services/airtable_api.dart';
+import '../utils/position.dart';
 
 class DetailPage extends StatelessWidget {
   final String spotId;
@@ -80,10 +80,10 @@ class DetailPage extends StatelessWidget {
                             width: 40,
                             height: 40,
                             child: const Icon(
-                                  Icons.location_pin,
-                                  size: 40,
-                                  color: Colors.redAccent,
-                                ),
+                              Icons.location_pin,
+                              size: 40,
+                              color: Colors.redAccent,
+                            ),
                           ),
                         ],
                       ),
