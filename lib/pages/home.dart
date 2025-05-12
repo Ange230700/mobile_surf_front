@@ -9,6 +9,7 @@ import 'favori.dart';
 import '../services/airtable_api.dart';
 import '../models/surf_spot.dart';
 import 'detail.dart';
+import '../utils/calculate_cross_axis_count.dart';
 
 class SurfSpotsGrid extends StatefulWidget {
   const SurfSpotsGrid({super.key});
@@ -49,35 +50,40 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
           Widget page;
           switch (selectedIndex) {
             case 0:
-              page = AlignedGridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-                itemCount: spots.length,
-                itemBuilder: (context, index) {
-                  final spot = spots[index];
-                  final isFavorite = _favoriteIndices.contains(index);
-
-                  return SurfSpotCard(
-                    spot: spot,
-                    isFavorite: isFavorite,
-                    onFavoriteToggle: () {
-                      setState(() {
-                        if (isFavorite) {
-                          _favoriteIndices.remove(index);
-                        } else {
-                          _favoriteIndices.add(index);
-                        }
-                      });
+              page = LayoutBuilder(
+                builder: (context, constraints) {
+                  final cols = calculateCrossAxisCount(constraints.maxWidth);
+                  return AlignedGridView.count(
+                    crossAxisCount: cols,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    itemCount: spots.length,
+                    itemBuilder: (context, index) {
+                      final spot = spots[index];
+                      final isFavorite = _favoriteIndices.contains(index);
+                  
+                      return SurfSpotCard(
+                        spot: spot,
+                        isFavorite: isFavorite,
+                        onFavoriteToggle: () {
+                          setState(() {
+                            if (isFavorite) {
+                              _favoriteIndices.remove(index);
+                            } else {
+                              _favoriteIndices.add(index);
+                            }
+                          });
+                        },
+                        onTap:
+                            () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => DetailPage(spotId: spot.id),
+                              ),
+                            ),
+                      );
                     },
-                    onTap:
-                        () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => DetailPage(spotId: spot.id),
-                          ),
-                        ),
                   );
-                },
+                }
               );
             case 1:
               page = FavoritesPage(

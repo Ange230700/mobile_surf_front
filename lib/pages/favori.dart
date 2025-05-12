@@ -5,6 +5,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../components/card.dart';
 import '../models/surf_spot.dart';
 import 'detail.dart';
+import '../utils/calculate_cross_axis_count.dart';
 
 class FavoritesPage extends StatelessWidget {
   final List<SurfSpot> spots;
@@ -20,24 +21,29 @@ class FavoritesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AlignedGridView.count(
-      crossAxisCount: 2,
-      crossAxisSpacing: 8,
-      mainAxisSpacing: 8,
-      itemCount: favoriteIndices.length,
-      itemBuilder: (context, index) {
-        final spotIndex = favoriteIndices.elementAt(index);
-        final spot = spots[spotIndex];
-        return SurfSpotCard(
-          spot: spot,
-          isFavorite: true,
-          onFavoriteToggle: () => onFavoriteToggle(spotIndex),
-          onTap:
-              () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => DetailPage(spotId: spot.id)),
-              ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final cols = calculateCrossAxisCount(constraints.maxWidth);
+        return AlignedGridView.count(
+          crossAxisCount: cols,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+          itemCount: favoriteIndices.length,
+          itemBuilder: (context, index) {
+            final spotIndex = favoriteIndices.elementAt(index);
+            final spot = spots[spotIndex];
+            return SurfSpotCard(
+              spot: spot,
+              isFavorite: true,
+              onFavoriteToggle: () => onFavoriteToggle(spotIndex),
+              onTap:
+                  () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => DetailPage(spotId: spot.id)),
+                  ),
+            );
+          },
         );
-      },
+      }
     );
   }
 }
