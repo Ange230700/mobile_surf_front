@@ -1,5 +1,3 @@
-// lib/components/card.dart
-
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
@@ -19,53 +17,56 @@ class SurfSpotCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final df = DateFormat.yMMMd(); // e.g. “Jul 22, 2024”
+    final df = DateFormat.yMMMd();
 
     return GFCard(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias,
-      boxFit: BoxFit.cover,
       elevation: 4,
-
-      // show the photo if we have one:
-      image:
-          spot.photoUrl != null
-              ? Image.network(
-                spot.photoUrl!,
-                height: 120,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder:
-                    (_, __, ___) =>
-                        Container(height: 120, color: Colors.grey[200]),
-              )
-              : null,
-
-      title: GFListTile(
-        title: Text(
-          spot.destination,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        subTitle: Text('Difficulty: ${spot.difficultyLevel}'),
-      ),
-
       content: Column(
+        mainAxisSize: MainAxisSize.min, // Empêche les débordements
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(spot.address),
+          if (spot.photoUrl != null)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                spot.photoUrl!,
+                height: 100,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  height: 100,
+                  color: Colors.grey[300],
+                  child: const Icon(Icons.broken_image),
+                ),
+              ),
+            ),
+          const SizedBox(height: 8),
+          Text(
+            spot.destination,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          Text('Difficulty: ${spot.difficultyLevel}'),
           const SizedBox(height: 4),
+          Text(
+            spot.address,
+            style: const TextStyle(fontSize: 12),
+          ),
           Text(
             'Season: ${df.format(spot.peakSeasonStart)} - ${df.format(spot.peakSeasonEnd)}',
             style: TextStyle(fontSize: 12, color: Colors.grey[600]),
           ),
-        ],
-      ),
-
-      buttonBar: GFButtonBar(
-        children: [
-          IconButton(
-            icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
-            onPressed: onFavoriteToggle,
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              icon: Icon(
+                isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: Colors.red,
+              ),
+              onPressed: onFavoriteToggle,
+            ),
           ),
         ],
       ),

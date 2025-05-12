@@ -29,7 +29,6 @@ class SurfSpot {
       final first = photos[0] as Map<String, dynamic>;
       photo = first['url'] as String?;
     }
-
     return SurfSpot(
       id: json['id'] as String,
       destination: fields['Destination'] as String? ?? 'Unknown',
