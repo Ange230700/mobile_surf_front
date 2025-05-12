@@ -26,4 +26,20 @@ class AirtableApi {
       .map((e) => SurfSpot.fromJson(e as Map<String, dynamic>))
       .toList();
   }
+
+  /// NEW: fetch a single record by its record ID
+  Future<Map<String, dynamic>> fetchSurfSpotById(String id) async {
+    final uri = Uri.parse('$_baseUrl/$id');
+    final resp = await http.get(
+      uri,
+      headers: {
+        'Authorization': 'Bearer $_apiKey',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (resp.statusCode != 200) {
+      throw Exception('Airtable API error: ${resp.statusCode}');
+    }
+    return json.decode(resp.body) as Map<String, dynamic>;
+  }
 }
