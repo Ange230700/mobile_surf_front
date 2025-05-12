@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../components/card.dart';
 import '../models/surf_spot.dart';
+import 'detail.dart';
 
 class FavoritesPage extends StatelessWidget {
   final List<SurfSpot> spots;
@@ -31,6 +32,10 @@ class FavoritesPage extends StatelessWidget {
           spot: spot,
           isFavorite: true,
           onFavoriteToggle: () => onFavoriteToggle(spotIndex),
+          onTap:
+              () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => DetailPage(spotId: spot.id)),
+              ),
         );
       },
     );

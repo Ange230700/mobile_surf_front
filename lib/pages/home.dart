@@ -8,6 +8,7 @@ import '../components/header.dart';
 import 'favori.dart';
 import '../services/airtable_api.dart';
 import '../models/surf_spot.dart';
+import 'detail.dart';
 
 class SurfSpotsGrid extends StatefulWidget {
   const SurfSpotsGrid({super.key});
@@ -69,6 +70,12 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
                         }
                       });
                     },
+                    onTap:
+                        () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => DetailPage(spotId: spot.id),
+                          ),
+                        ),
                   );
                 },
               );
