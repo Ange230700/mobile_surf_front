@@ -1,6 +1,7 @@
 // lib/page/home.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../components/card.dart';
 import '../components/footer.dart';
 import '../components/header.dart';
@@ -47,14 +48,10 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
           Widget page;
           switch (selectedIndex) {
             case 0:
-              page = GridView.builder(
-                padding: const EdgeInsets.all(8),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                  childAspectRatio: 0.7,
-                ),
+              page = AlignedGridView.count(
+                crossAxisCount: 2,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
                 itemCount: spots.length,
                 itemBuilder: (context, index) {
                   final spot = spots[index];

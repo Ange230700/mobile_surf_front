@@ -1,6 +1,7 @@
 // lib\pages\favori.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../components/card.dart';
 import '../models/surf_spot.dart';
 
@@ -18,14 +19,10 @@ class FavoritesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(8),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-        childAspectRatio: 0.7,
-      ),
+    return AlignedGridView.count(
+      crossAxisCount: 2,
+      crossAxisSpacing: 8,
+      mainAxisSpacing: 8,
       itemCount: favoriteIndices.length,
       itemBuilder: (context, index) {
         final spotIndex = favoriteIndices.elementAt(index);
