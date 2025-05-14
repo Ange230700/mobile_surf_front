@@ -59,7 +59,9 @@ class SurfSpotCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(spot.address, style: const TextStyle(fontSize: 12)),
             Text(
-              'Season: ${df.format(spot.peakSeasonStart)} - ${df.format(spot.peakSeasonEnd)}',
+              spot.peakSeasonStart != null && spot.peakSeasonEnd != null
+                  ? 'Season: ${df.format(spot.peakSeasonStart!)} - ${df.format(spot.peakSeasonEnd!)}'
+                  : 'Season: N/A',
               style: TextStyle(fontSize: 12, color: Colors.grey[600]),
             ),
             const SizedBox(height: 8),

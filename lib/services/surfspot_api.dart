@@ -8,9 +8,9 @@ import '../models/surf_spot_2.dart';
 class SurfSpotApi {
   final String _baseUrl = dotenv.env['API_BASE_URL']!;
 
-  /// GET /SurfSpot2/all
+  /// GET api/SurfSpot2/all
   Future<List<SurfSpot2>> fetchSurfSpots() async {
-    final uri = Uri.parse('$_baseUrl/SurfSpot/all');
+    final uri = Uri.parse('$_baseUrl/api/SurfSpot/all');
     final resp = await http.get(uri);
     if (resp.statusCode != 200) {
       throw Exception('API error: ${resp.statusCode}');
