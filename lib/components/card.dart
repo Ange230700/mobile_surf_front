@@ -40,12 +40,12 @@ class SurfSpotCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
                   spot.photoUrl!,
-                  height: 120,
+                  height: 100,
                   width: double.infinity,
                   fit: BoxFit.cover,
                   errorBuilder:
                       (_, __, ___) => Container(
-                        height: 120,
+                        height: 100,
                         color: Colors.grey[300],
                         child: const Icon(Icons.broken_image),
                       ),
@@ -54,35 +54,35 @@ class SurfSpotCard extends StatelessWidget {
 
             const SizedBox(height: 8),
             // Thumbnails for additional photos
-            if (spot.photoUrls.isNotEmpty)
-              SizedBox(
-                height: 60,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: spot.photoUrls.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 8),
-                  itemBuilder: (context, idx) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
-                      child: Image.network(
-                        spot.photoUrls[idx],
-                        width: 60,
-                        height: 60,
-                        fit: BoxFit.cover,
-                        errorBuilder:
-                            (_, __, ___) => Container(
-                              width: 60,
-                              height: 60,
-                              color: Colors.grey[300],
-                              child: const Icon(Icons.broken_image, size: 16),
-                            ),
-                      ),
-                    );
-                  },
-                ),
-              ),
+            // if (spot.photoUrls.isNotEmpty)
+            //   SizedBox(
+            //     height: 60,
+            //     child: ListView.separated(
+            //       scrollDirection: Axis.horizontal,
+            //       itemCount: spot.photoUrls.length,
+            //       separatorBuilder: (_, __) => const SizedBox(width: 8),
+            //       itemBuilder: (context, idx) {
+            //         return ClipRRect(
+            //           borderRadius: BorderRadius.circular(6),
+            //           child: Image.network(
+            //             spot.photoUrls[idx],
+            //             width: 60,
+            //             height: 60,
+            //             fit: BoxFit.cover,
+            //             errorBuilder:
+            //                 (_, __, ___) => Container(
+            //                   width: 60,
+            //                   height: 60,
+            //                   color: Colors.grey[300],
+            //                   child: const Icon(Icons.broken_image, size: 16),
+            //                 ),
+            //           ),
+            //         );
+            //       },
+            //     ),
+            //   ),
 
-            const SizedBox(height: 8),
+            // const SizedBox(height: 8),
             Text(
               spot.destination,
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -119,25 +119,25 @@ class SurfSpotCard extends StatelessWidget {
               ),
 
             // Influencers or local heroes
-            if (spot.influencers.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Row(
-                  children: [
-                    const Icon(Icons.person, size: 16),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        'Influencers: ${spot.influencers.join(', ')}',
-                        style: const TextStyle(fontSize: 12),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            // if (spot.influencers.isNotEmpty)
+            //   Padding(
+            //     padding: const EdgeInsets.only(top: 8),
+            //     child: Row(
+            //       children: [
+            //         const Icon(Icons.person, size: 16),
+            //         const SizedBox(width: 4),
+            //         Expanded(
+            //           child: Text(
+            //             'Influencers: ${spot.influencers.join(', ')}',
+            //             style: const TextStyle(fontSize: 12),
+            //             overflow: TextOverflow.ellipsis,
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
 
-            const SizedBox(height: 8),
+            // const SizedBox(height: 8),
             Align(
               alignment: Alignment.centerRight,
               child: IconButton(

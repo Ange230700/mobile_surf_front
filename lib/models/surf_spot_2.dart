@@ -44,6 +44,8 @@ class SurfSpot2 {
     String? begin = json['peakSeasonBegin'] as String?;
     String? end = json['peakSeasonEnd'] as String?;
 
+    final photoUrlsList = List<String>.from(json['photoUrls'] ?? []);
+
     return SurfSpot2(
       id: json['surfSpotId'].toString(), // use the int ID
       destination: json['destination'] as String? ?? 'Unknown',
@@ -51,9 +53,9 @@ class SurfSpot2 {
       difficultyLevel: (json['difficultyLevel'] as num?)?.toInt() ?? 0,
       peakSeasonStart: begin != null ? DateTime.parse(begin) : null,
       peakSeasonEnd: end != null ? DateTime.parse(end) : null,
-      photoUrl: null, // unless you extend the back-end to include photos
+      photoUrl: photoUrlsList.isNotEmpty ? photoUrlsList.first : null,
       location: loc,
-      photoUrls: List<String>.from(json['photoUrls'] ?? []),
+      photoUrls: photoUrlsList, // keep the rest for thumbnails or later use
       breakTypes: List<String>.from(json['breakTypes'] ?? []),
       influencers: List<String>.from(json['influencers'] ?? []),
     );
