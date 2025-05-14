@@ -3,10 +3,10 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:getwidget/getwidget.dart';
-import '../models/surf_spot.dart';
+import '../models/surf_spot_2.dart';
 
 class SurfSpotCard extends StatelessWidget {
-  final SurfSpot spot;
+  final SurfSpot2 spot;
   final bool isFavorite;
   final VoidCallback onFavoriteToggle;
   final VoidCallback? onTap;
