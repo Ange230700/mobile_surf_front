@@ -17,6 +17,7 @@ class SurfSpot2 {
   final List<String> photoUrls;
   final List<String> breakTypes;
   final List<String> influencers;
+  final String? magicSeaweedLink;
 
   SurfSpot2({
     required this.id,
@@ -30,6 +31,7 @@ class SurfSpot2 {
     this.photoUrls = const [],
     this.breakTypes = const [],
     this.influencers = const [],
+    this.magicSeaweedLink,
   });
 
   factory SurfSpot2.fromJson(Map<String, dynamic> json) {
@@ -58,6 +60,7 @@ class SurfSpot2 {
       photoUrls: photoUrlsList, // keep the rest for thumbnails or later use
       breakTypes: List<String>.from(json['breakTypes'] ?? []),
       influencers: List<String>.from(json['influencers'] ?? []),
+      magicSeaweedLink: json['magicSeaweedLink'] as String?,
     );
   }
 }

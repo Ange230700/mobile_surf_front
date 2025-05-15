@@ -18,4 +18,15 @@ class SurfSpotApi {
     final List<dynamic> data = json.decode(resp.body);
     return data.map((e) => SurfSpot2.fromJson(e)).toList();
   }
+
+  /// GET /api/surfspot/{id}
+  Future<SurfSpot2> fetchSurfSpotById(String id) async {
+    final uri = Uri.parse('$_baseUrl/api/SurfSpot/$id');
+    final resp = await http.get(uri);
+    if (resp.statusCode != 200) {
+      throw Exception('API error: ${resp.statusCode}');
+    }
+    final data = json.decode(resp.body) as Map<String, dynamic>;
+    return SurfSpot2.fromJson(data);
+  }
 }

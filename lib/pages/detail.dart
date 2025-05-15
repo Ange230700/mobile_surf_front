@@ -1,20 +1,27 @@
 // lib/pages/detail.dart
 
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:latlong2/latlong.dart';
-import '../services/airtable_api.dart';
-import '../utils/position.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+// import '../services/airtable_api.dart';
+import '../services/surfspot_api.dart';
+import '../models/surf_spot_2.dart';
+// import '../utils/position.dart';
 
 class DetailPage extends StatelessWidget {
   final String spotId;
-  const DetailPage({super.key, required this.spotId});
+  final _api = SurfSpotApi();
+
+  DetailPage({super.key, required this.spotId});
+
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, dynamic>>(
-      future: AirtableApi().fetchSurfSpotById(spotId),
+    return FutureBuilder<SurfSpot2>(
+      future: _api.fetchSurfSpotById(spotId),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
           return const Scaffold(
@@ -27,21 +34,14 @@ class DetailPage extends StatelessWidget {
           );
         }
 
-        final record = snapshot.data!;
-        final fields = record['fields'] as Map<String, dynamic>? ?? {};
+        final spot = snapshot.data!;
 
         // Parse geocode
-        LatLng spotLatLng;
-        try {
-          spotLatLng = parseLatLng(fields['Geocode'] as String? ?? '');
-        } catch (_) {
-          spotLatLng = LatLng(0, 0);
-        }
+        final LatLng spotLatLng = spot.location;
 
         final photoUrl =
-            (fields['Photos'] as List<dynamic>?)?.isNotEmpty == true
-                ? fields['Photos'][0]['url'] as String
-                : 'https://via.placeholder.com/400x300.png?text=No+Image';
+            spot.photoUrl ??
+            'https://via.placeholder.com/400x300.png?text=No+Image';
 
         return Scaffold(
           extendBodyBehindAppBar: true,
@@ -108,7 +108,7 @@ class DetailPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            fields['Destination'] as String? ?? 'Unknown',
+                            spot.destination,
                             style: const TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
@@ -116,27 +116,40 @@ class DetailPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Type: ${(fields['Surf Break'] as List?)?.join(', ') ?? 'N/A'}',
+                            'Type: ${spot.breakTypes.isNotEmpty ? spot.breakTypes.join(', ') : 'N/A'}',
                             style: const TextStyle(fontSize: 16),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Difficulty: ${fields['Difficulty Level'] ?? 'N/A'} / 5',
+                            'Difficulty: ${spot.difficultyLevel} / 5',
                             style: const TextStyle(fontSize: 16),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Season: ${fields['Peak Surf Season Begins']} to ${fields['Peak Surf Season Ends']}',
+                            'Season: '
+                            '${spot.peakSeasonStart != null ? DateFormat.yMMMd().format(spot.peakSeasonStart!) : 'N/A'}'
+                            ' to '
+                            '${spot.peakSeasonEnd != null ? DateFormat.yMMMd().format(spot.peakSeasonEnd!) : 'N/A'}',
                             style: const TextStyle(fontSize: 16),
                           ),
                           const SizedBox(height: 12),
-                          if (fields['Magic Seaweed Link'] != null)
+                          if (spot.magicSeaweedLink != null)
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
                               ),
-                              onPressed: () {
-                                // TODO: use url_launcher to open fields['Magic Seaweed Link']
+                              onPressed: () async {
+                                final url = spot.magicSeaweedLink!;
+                                final messenger = ScaffoldMessenger.of(context);
+                                if (await canLaunchUrlString(url)) {
+                                  await launchUrlString(url);
+                                } else {
+                                  messenger.showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Could not launch URL'),
+                                    ),
+                                  );
+                                }
                               },
                               child: const Text(
                                 'View Surf Report',
