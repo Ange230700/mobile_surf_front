@@ -6,7 +6,7 @@ import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_ti
 import 'package:latlong2/latlong.dart';
 // import '../services/airtable_api.dart';
 import '../services/surfspot_api.dart';
-import '../models/surf_spot_2.dart';
+import '../models/surf_spot.dart';
 
 class AllSpotsMap extends StatefulWidget {
   const AllSpotsMap({super.key});
@@ -16,7 +16,7 @@ class AllSpotsMap extends StatefulWidget {
 }
 
 class _AllSpotsMapState extends State<AllSpotsMap> {
-  late final Future<List<SurfSpot2>> _spotsFuture;
+  late final Future<List<SurfSpot>> _spotsFuture;
   final MapController _mapController = MapController();
 
   @override
@@ -27,7 +27,7 @@ class _AllSpotsMapState extends State<AllSpotsMap> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<SurfSpot2>>(
+    return FutureBuilder<List<SurfSpot>>(
       future: _spotsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {

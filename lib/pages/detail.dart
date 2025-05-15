@@ -6,10 +6,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher_string.dart';
-// import '../services/airtable_api.dart';
 import '../services/surfspot_api.dart';
-import '../models/surf_spot_2.dart';
-// import '../utils/position.dart';
+import '../models/surf_spot.dart';
 
 class DetailPage extends StatelessWidget {
   final String spotId;
@@ -19,7 +17,7 @@ class DetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<SurfSpot2>(
+    return FutureBuilder<SurfSpot>(
       future: _api.fetchSurfSpotById(spotId),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
@@ -164,7 +162,7 @@ class DetailPage extends StatelessWidget {
     );
   }
 
-  Widget buildInfoCard(BuildContext context, SurfSpot2 spot) {
+  Widget buildInfoCard(BuildContext context, SurfSpot spot) {
     return SizedBox(
       width: 260,
       child: Card(
