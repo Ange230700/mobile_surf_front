@@ -3,12 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../components/card.dart';
-import '../models/surf_spot.dart';
+// import '../models/surf_spot.dart';
+import '../models/surf_spot_2.dart';
 import 'detail.dart';
 import '../utils/calculate_cross_axis_count.dart';
 
 class FavoritesPage extends StatelessWidget {
-  final List<SurfSpot> spots;
+  final List<SurfSpot2> spots;
   final Set<int> favoriteIndices;
   final void Function(int) onFavoriteToggle;
 

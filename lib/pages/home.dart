@@ -6,8 +6,10 @@ import '../components/card.dart';
 import '../components/footer.dart';
 import '../components/header.dart';
 import 'favori.dart';
-import '../services/airtable_api.dart';
-import '../models/surf_spot.dart';
+// import '../services/airtable_api.dart';
+import '../services/surfspot_api.dart';
+// import '../models/surf_spot.dart';
+import '../models/surf_spot_2.dart';
 import 'detail.dart';
 import '../utils/calculate_cross_axis_count.dart';
 
@@ -19,9 +21,9 @@ class SurfSpotsGrid extends StatefulWidget {
 }
 
 class _SurfSpotsGridState extends State<SurfSpotsGrid> {
-  late Future<List<SurfSpot>> _spotsFuture;
+  late Future<List<SurfSpot2>> _spotsFuture;
   int selectedIndex = 0;
-  final _api = AirtableApi();
+  final _api = SurfSpotApi();
   final Set<int> _favoriteIndices = {};
 
   @override
@@ -34,9 +36,9 @@ class _SurfSpotsGridState extends State<SurfSpotsGrid> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Header(title: 'Surf Spots'), centerTitle: true),
-      body: FutureBuilder<List<SurfSpot>>(
+      body: FutureBuilder<List<SurfSpot2>>(
         future: _spotsFuture,
-        builder: (context, AsyncSnapshot<List<SurfSpot>> snapshot) {
+        builder: (context, AsyncSnapshot<List<SurfSpot2>> snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
             return const Center(child: CircularProgressIndicator());
           }
