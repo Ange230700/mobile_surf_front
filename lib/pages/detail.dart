@@ -17,7 +17,6 @@ class DetailPage extends StatelessWidget {
 
   DetailPage({super.key, required this.spotId});
 
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<SurfSpot2>(
@@ -43,129 +42,234 @@ class DetailPage extends StatelessWidget {
             spot.photoUrl ??
             'https://via.placeholder.com/400x300.png?text=No+Image';
 
+        final isLandscape =
+            MediaQuery.of(context).orientation == Orientation.landscape;
+
         return Scaffold(
           extendBodyBehindAppBar: true,
           appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
           body: Stack(
             children: [
+              // Fullscreen background image
               Positioned.fill(
                 child: Image.network(photoUrl, fit: BoxFit.cover),
               ),
+
+              // Black overlay
               Positioned.fill(
                 child: Container(color: Colors.black.withAlpha(80)),
               ),
-              Positioned(
-                bottom: 250,
-                left: 16,
-                right: 16,
-                height: 200,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: FlutterMap(
-                    options: MapOptions(
-                      initialCenter: spotLatLng,
-                      initialZoom: 15,
-                    ),
-                    children: [
-                      TileLayer(
-                        urlTemplate:
-                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                        tileProvider: CancellableNetworkTileProvider(),
-                        maxZoom: 19,
-                      ),
-                      MarkerLayer(
-                        markers: [
-                          Marker(
-                            point: spotLatLng,
-                            width: 40,
-                            height: 40,
-                            child: const Icon(
-                              Icons.location_pin,
-                              size: 40,
-                              color: Colors.redAccent,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 32,
-                right: 16,
-                child: SizedBox(
-                  width: 260,
-                  child: Card(
-                    color: const Color(0xCCA2D8F7),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 6,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            spot.destination,
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Type: ${spot.breakTypes.isNotEmpty ? spot.breakTypes.join(', ') : 'N/A'}',
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Difficulty: ${spot.difficultyLevel} / 5',
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Season: '
-                            '${spot.peakSeasonStart != null ? DateFormat.yMMMd().format(spot.peakSeasonStart!) : 'N/A'}'
-                            ' to '
-                            '${spot.peakSeasonEnd != null ? DateFormat.yMMMd().format(spot.peakSeasonEnd!) : 'N/A'}',
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                          const SizedBox(height: 12),
-                          if (spot.magicSeaweedLink != null)
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
+
+              // UI content depending on orientation
+              Positioned.fill(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child:
+                      isLandscape
+                          ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // Mini map on the left
+                              buildMiniMap(context, spotLatLng),
+                              // Info card on the right
+                              buildInfoCard(context, spot),
+                            ],
+                          )
+                          : Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: buildMiniMap(context, spotLatLng),
                               ),
-                              onPressed: () async {
-                                final url = spot.magicSeaweedLink!;
-                                final messenger = ScaffoldMessenger.of(context);
-                                if (await canLaunchUrlString(url)) {
-                                  await launchUrlString(url);
-                                } else {
-                                  messenger.showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Could not launch URL'),
-                                    ),
-                                  );
-                                }
-                              },
-                              child: const Text(
-                                'View Surf Report',
-                                style: TextStyle(color: Colors.black),
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: buildInfoCard(context, spot),
                               ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
+                            ],
+                          ),
                 ),
               ),
             ],
           ),
         );
       },
+    );
+  }
+
+  Widget buildMiniMap(BuildContext context, LatLng spotLatLng) {
+    return GestureDetector(
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (context) {
+            return DraggableScrollableSheet(
+              expand: true,
+              builder: (context, scrollController) {
+                return SafeArea(child: FullMapView(spotLatLng: spotLatLng));
+              },
+            );
+          },
+        );
+      },
+      child: Stack(
+        children: [
+          SizedBox(
+            width: 150,
+            height: 150,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: FlutterMap(
+                options: MapOptions(
+                  initialCenter: spotLatLng,
+                  initialZoom: 15,
+                  interactionOptions: const InteractionOptions(
+                    flags: InteractiveFlag.none,
+                  ),
+                ),
+                children: [
+                  TileLayer(
+                    urlTemplate:
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    tileProvider: CancellableNetworkTileProvider(),
+                    maxZoom: 19,
+                  ),
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        point: spotLatLng,
+                        width: 40,
+                        height: 40,
+                        child: const Icon(
+                          Icons.location_pin,
+                          size: 40,
+                          color: Colors.blueAccent,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const Positioned(
+            bottom: 8,
+            right: 8,
+            child: Icon(Icons.fullscreen, color: Colors.white),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildInfoCard(BuildContext context, SurfSpot2 spot) {
+    return SizedBox(
+      width: 260,
+      child: Card(
+        color: const Color(0xCCA2D8F7),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        elevation: 6,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                spot.destination,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Type: ${spot.breakTypes.isNotEmpty ? spot.breakTypes.join(', ') : 'N/A'}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Difficulty: ${spot.difficultyLevel} / 5',
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Season: '
+                '${spot.peakSeasonStart != null ? DateFormat.yMMMd().format(spot.peakSeasonStart!) : 'N/A'}'
+                ' to '
+                '${spot.peakSeasonEnd != null ? DateFormat.yMMMd().format(spot.peakSeasonEnd!) : 'N/A'}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 12),
+              if (spot.magicSeaweedLink != null)
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                  ),
+                  onPressed: () async {
+                    final url = spot.magicSeaweedLink!;
+                    final messenger = ScaffoldMessenger.of(context);
+                    if (await canLaunchUrlString(url)) {
+                      await launchUrlString(url);
+                    } else {
+                      messenger.showSnackBar(
+                        const SnackBar(content: Text('Could not launch URL')),
+                      );
+                    }
+                  },
+                  child: const Text(
+                    'View Surf Report',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class FullMapView extends StatelessWidget {
+  final LatLng spotLatLng;
+  const FullMapView({super.key, required this.spotLatLng});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Carte complète")),
+      body: FlutterMap(
+        options: MapOptions(
+          initialCenter: spotLatLng,
+          initialZoom: 15,
+          interactionOptions: const InteractionOptions(
+            flags: InteractiveFlag.all,
+          ),
+        ),
+        children: [
+          TileLayer(
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            tileProvider: CancellableNetworkTileProvider(),
+            maxZoom: 19,
+          ),
+          MarkerLayer(
+            markers: [
+              Marker(
+                point: spotLatLng,
+                width: 40,
+                height: 40,
+                child: const Icon(
+                  Icons.location_pin,
+                  size: 40,
+                  color: Colors.blueAccent,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
