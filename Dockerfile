@@ -2,7 +2,7 @@
 FROM ghcr.io/cirruslabs/flutter:stable AS builder
 WORKDIR /app
 
-# Activer le support Web sans changer de canal
+# Activer le support Web 
 RUN flutter config --enable-web
 
 # 1. Copier pubspec & récupérer les dépendances
