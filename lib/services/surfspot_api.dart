@@ -1,12 +1,12 @@
 // lib/services/surfspot_api.dart
 
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import '../config.dart';
 import 'package:http/http.dart' as http;
 import '../models/surf_spot.dart';
 
 class SurfSpotApi {
-  final String _baseUrl = dotenv.env['API_BASE_URL']!;
+  final String _baseUrl = apiBase;
 
   /// GET api/SurfSpot/all
   Future<List<SurfSpot>> fetchSurfSpots() async {

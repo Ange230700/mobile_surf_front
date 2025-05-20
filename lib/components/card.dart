@@ -85,17 +85,17 @@ class SurfSpotCard extends StatelessWidget {
             // const SizedBox(height: 8),
             Text(
               spot.destination,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
             Text('Difficulty: ${spot.difficultyLevel}'),
 
             const SizedBox(height: 4),
-            Text(spot.address, style: const TextStyle(fontSize: 12)),
+            Text(spot.address, style: const TextStyle(fontSize: 16)),
             Text(
               spot.peakSeasonStart != null && spot.peakSeasonEnd != null
                   ? 'Season: ${df.format(spot.peakSeasonStart!)} - ${df.format(spot.peakSeasonEnd!)}'
                   : 'Season: N/A',
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
 
             const SizedBox(height: 8),
@@ -110,7 +110,7 @@ class SurfSpotCard extends StatelessWidget {
                           (type) => Chip(
                             label: Text(
                               type,
-                              style: const TextStyle(fontSize: 12),
+                              style: const TextStyle(fontSize: 16),
                             ),
                             visualDensity: VisualDensity.compact,
                           ),
