@@ -6,6 +6,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../services/surfspot_api.dart';
 import '../models/surf_spot.dart';
 
@@ -202,26 +203,25 @@ class DetailPage extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               if (spot.magicSeaweedLink != null)
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                  ),
-                  onPressed: () async {
-                    final url = spot.magicSeaweedLink!;
-                    final messenger = ScaffoldMessenger.of(context);
-                    if (await canLaunchUrlString(url)) {
-                      await launchUrlString(url);
-                    } else {
-                      messenger.showSnackBar(
-                        const SnackBar(content: Text('Could not launch URL')),
-                      );
-                    }
-                  },
-                  child: const Text(
-                    'View Surf Report',
-                    style: TextStyle(color: Colors.black),
-                  ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
                 ),
+                onPressed: () async {
+                  final messenger = ScaffoldMessenger.of(context);
+                  final Uri url = Uri.parse(spot.magicSeaweedLink!);
+
+                  if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+                    messenger.showSnackBar(
+                      const SnackBar(content: Text('Aucune application disponible pour ouvrir le lien')),
+                    );
+                  }
+                },
+                child: const Text(
+                  'View Surf Report',
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
             ],
           ),
         ),
