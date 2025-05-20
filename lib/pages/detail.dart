@@ -144,7 +144,7 @@ class DetailPage extends StatelessWidget {
                         child: const Icon(
                           Icons.location_pin,
                           size: 40,
-                          color: Colors.blueAccent,
+                          color: Colors.redAccent,
                         ),
                       ),
                     ],
@@ -156,7 +156,7 @@ class DetailPage extends StatelessWidget {
           const Positioned(
             bottom: 8,
             right: 8,
-            child: Icon(Icons.fullscreen, color: Colors.white),
+            child: Icon(Icons.fullscreen, color: Colors.black),
           ),
         ],
       ),
@@ -242,6 +242,12 @@ class FullMapView extends StatelessWidget {
         options: MapOptions(
           initialCenter: spotLatLng,
           initialZoom: 15,
+          cameraConstraint: CameraConstraint.contain(
+            bounds: LatLngBounds(
+              LatLng(-85.0, -180.0), // Sud-Ouest - coin inférieur gauche
+              LatLng(85.0, 180.0),   // Nord-Est - coin supérieur droit
+            ),
+          ),
           interactionOptions: const InteractionOptions(
             flags: InteractiveFlag.all,
           ),
@@ -261,7 +267,7 @@ class FullMapView extends StatelessWidget {
                 child: const Icon(
                   Icons.location_pin,
                   size: 40,
-                  color: Colors.blueAccent,
+                  color: Colors.redAccent,
                 ),
               ),
             ],
