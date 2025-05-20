@@ -14,7 +14,6 @@ dependencies:
     sdk: flutter
   flutter_map: ^8.1.1
   flutter_map_cancellable_tile_provider: ^3.1.0
-  flutter_dotenv: ^5.2.1
   getwidget: ^6.0.0
   google_fonts: ^6.2.1
   http: ^1.4.0
@@ -35,7 +34,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/data/records.json
-    - .env
 flutter_launcher_icons:
   android: true
   ios: true
