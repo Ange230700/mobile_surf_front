@@ -6,6 +6,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../services/surfspot_api.dart';
 import '../models/surf_spot.dart';
 
@@ -143,7 +144,7 @@ class DetailPage extends StatelessWidget {
                         child: const Icon(
                           Icons.location_pin,
                           size: 40,
-                          color: Colors.blueAccent,
+                          color: Colors.redAccent,
                         ),
                       ),
                     ],
@@ -155,7 +156,7 @@ class DetailPage extends StatelessWidget {
           const Positioned(
             bottom: 8,
             right: 8,
-            child: Icon(Icons.fullscreen, color: Colors.white),
+            child: Icon(Icons.fullscreen, color: Colors.black),
           ),
         ],
       ),
@@ -202,26 +203,25 @@ class DetailPage extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               if (spot.magicSeaweedLink != null)
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                  ),
-                  onPressed: () async {
-                    final url = spot.magicSeaweedLink!;
-                    final messenger = ScaffoldMessenger.of(context);
-                    if (await canLaunchUrlString(url)) {
-                      await launchUrlString(url);
-                    } else {
-                      messenger.showSnackBar(
-                        const SnackBar(content: Text('Could not launch URL')),
-                      );
-                    }
-                  },
-                  child: const Text(
-                    'View Surf Report',
-                    style: TextStyle(color: Colors.black),
-                  ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
                 ),
+                onPressed: () async {
+                  final messenger = ScaffoldMessenger.of(context);
+                  final Uri url = Uri.parse(spot.magicSeaweedLink!);
+
+                  if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+                    messenger.showSnackBar(
+                      const SnackBar(content: Text('Aucune application disponible pour ouvrir le lien')),
+                    );
+                  }
+                },
+                child: const Text(
+                  'View Surf Report',
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
             ],
           ),
         ),
@@ -242,8 +242,14 @@ class FullMapView extends StatelessWidget {
         options: MapOptions(
           initialCenter: spotLatLng,
           initialZoom: 15,
+          cameraConstraint: CameraConstraint.contain(
+            bounds: LatLngBounds(
+              LatLng(-85.0, -180.0), // Sud-Ouest - coin inférieur gauche
+              LatLng(85.0, 180.0),   // Nord-Est - coin supérieur droit
+            ),
+          ),
           interactionOptions: const InteractionOptions(
-            flags: InteractiveFlag.all,
+            flags: InteractiveFlag.all & ~InteractiveFlag.rotate, // Désactive la rotation si nécessaire
           ),
         ),
         children: [
@@ -261,7 +267,7 @@ class FullMapView extends StatelessWidget {
                 child: const Icon(
                   Icons.location_pin,
                   size: 40,
-                  color: Colors.blueAccent,
+                  color: Colors.redAccent,
                 ),
               ),
             ],

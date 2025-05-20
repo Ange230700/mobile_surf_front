@@ -1,0 +1,35 @@
+name: Build & Deploy Flutter Web
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build Flutter Web in Docker
+        run: |
+          docker build -t flutter-web-builder .
+
+      - name: Export static web files
+        run: |
+          mkdir -p web_out
+          # On lance le container, copie les fichiers compilés depuis nginx
+          docker create --name tmp flutter-web-builder
+          docker cp tmp:/usr/share/nginx/html/. web_out/
+          docker rm tmp
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          cd web_out
+          vercel --prod --token $VERCEL_TOKEN --confirm
