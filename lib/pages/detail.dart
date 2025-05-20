@@ -249,7 +249,7 @@ class FullMapView extends StatelessWidget {
             ),
           ),
           interactionOptions: const InteractionOptions(
-            flags: InteractiveFlag.all,
+            flags: InteractiveFlag.all & ~InteractiveFlag.rotate, // Désactive la rotation si nécessaire
           ),
         ),
         children: [
